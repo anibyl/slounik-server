@@ -1,5 +1,6 @@
 package org.anibyl.slounik.server
 
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
@@ -9,5 +10,9 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 interface EngBelRepository : CrudRepository<EngBelEntity, Long> {
-	fun findByTitle(title: String): List<EngBelEntity>
+	@Query(value = "SELECT * FROM engbel WHERE title ~* ('\\m' || ?1 || '\\M');", nativeQuery = true)
+	fun findInTitle(word: String): List<EngBelEntity>
+
+	@Query(value = "SELECT * FROM engbel WHERE title ~* ('\\m' || ?1 || '\\M') OR description ~* ('\\m' || ?1 || '\\M');", nativeQuery = true)
+	fun findInTitleOrDescription(word: String): List<EngBelEntity>
 }

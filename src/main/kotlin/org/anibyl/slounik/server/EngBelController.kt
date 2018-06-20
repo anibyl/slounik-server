@@ -13,10 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/engbel")
 class EngBelController(val repository: EngBelRepository) {
-	@GetMapping("/{title}")
+	@GetMapping("/{word}")
 	fun getArticle(
-			@PathVariable title: String, @RequestParam(name = "d", defaultValue = "false") searchInDescription: Boolean
+			@PathVariable word: String, @RequestParam(name = "d", defaultValue = "false") searchInDescription: Boolean
 	): List<EngBelEntity> {
-		return repository.findByTitle(title)
+		return if (searchInDescription) {
+			repository.findInTitleOrDescription(word)
+		} else {
+			repository.findInTitle(word)
+		}
 	}
 }
